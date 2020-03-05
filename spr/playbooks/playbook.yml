@@ -1,0 +1,207 @@
+---
+
+# Copyright (c) 2017, Groupon, Inc.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+# Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+#
+# Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# Neither the name of GROUPON nor the names of its contributors may be
+# used to endorse or promote products derived from this software without
+# specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+# PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+# TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#- hosts: all
+#  tasks:
+#    - name: Dump all vars
+#      debug:
+#        msg: "{{ vars }}"
+
+# an ansible play to run tomcat with jdk-1.2 in four acts.
+# by dariush@najjarza.de
+# version 
+# 0.1.0
+#
+# Act One 
+- name: Act One create user
+  hosts: tomcat 
+  become: yes
+  become_user: root
+  vars:
+  - cli_users:
+    - username: 'cliuser'
+      password: 'c1i3nT&'
+  tasks:
+
+  - name: Make sure we have a 'wheel' group
+    group:
+      name=wheel
+      state=present
+    
+  - name: Allow wheel group to have passwordless sudo
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: '^%wheel'
+      line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+ 
+  - name: Create User
+    user:
+      name: '{{item.username}}'
+      groups: 'wheel'
+      append: true
+      createhome: true
+      password: "{{ item.password | password_hash('sha512','A512') }}"
+    with_items: '{{cli_users}}'
+
+  - name: Setup Sudo Access
+    copy:
+      dest: /etc/sudoers.d/{{item.username}}
+      content: "{{item.username}} ALL=(ALL) NOPASSWD: ALL"
+      validate: /usr/sbin/visudo -cf %s
+    with_items: '{{cli_users}}'
+
+# Act Two
+- name: Act Two Download files 
+  hosts: ans.local
+  become: yes
+  become_user: root
+  vars:
+  - tomcat_hosts:
+    - container_name: 'cli1'
+      image_name: 'samanpr_cli1'
+      image_tag: 'latest'
+    - container_name: 'cli2'
+      image_name: 'samanpr_cli2'
+      image_tag: 'latest'
+    - container_name: 'cli3'
+      image_name: 'samanpr_cli3'
+      image_tag: 'latest'
+  tasks:
+
+  - name: Create JDK directory
+    become: yes
+    become_user: root
+    file:
+      state: directory
+      path: "/media/pkgs"
+      owner: root
+      group: root
+      mode: "u=rwx,go=rx"
+    register: pkgs_dir
+
+    #  - debug:
+    #      var: pkgs_dir
+    #      verbosity: 2
+    #
+    #  - name: Download jdk12 
+    #    get_url:
+    #      url: https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz
+    #      dest: /tmp/jdk-12.tar.gz
+    #
+    #  - name: extract jdk12 on ansible master server
+    #    become: yes
+    #    become_user: root
+    #    # no idea why but unarchive can not process jdk archive. using shell
+    #    #unarchive:
+    #    #  src: /tmp/jdk-12.tar.gz
+    #    #  dest: /media/pkgs/
+    #    #  mode: 0755
+    #    #remote_src: yes
+    #    shell: "tar -xzvf /tmp/jdk-12.tar.gz -C /media/pkgs/"
+    #    register: unzip
+
+  - name : Download and extract jdk
+    become: yes
+    tags: installJava
+    unarchive:
+      src: "https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz"
+      dest: "/media/pkgs/"
+      mode: 0755
+      remote_src: yes
+    register: "javaExtract"
+
+  # ansible copy is way too slow using shell
+  - name: copy JDK to container
+    shell: "docker cp /media/pkgs/ '{{item.container_name}}':/opt/"
+    with_items: "{{tomcat_hosts}}"
+
+# Act Three
+- name: Act Three install Java 
+  hosts: tomcat 
+  vars:
+  - tc_hosts:
+    - container_name: 'cli1'
+      image_name: 'samanpr_cli1'
+      image_tag: 'latest'
+    - container_name: 'cli2'
+      image_name: 'samanpr_cli2'
+      image_tag: 'latest'
+    - container_name: 'cli3'
+      image_name: 'samanpr_cli3'
+      image_tag: 'latest'
+  environment:
+    JAVA_HOME: /opt/pkgs/jdk-12.0.2/
+  tasks:
+
+  # set JAVA_HOME environment variable
+  - name: Set JAVA_HOME 
+    lineinfile:
+      path: /etc/profile
+      regexp: 'JAVA_HOME'
+      line: export JAVA_HOME=/opt/pkgs/jdk-12.0.2/
+
+  - name: source /etc/profile
+    shell: 'source /etc/profile'
+    register: shellout
+
+# Act Four
+- name: Act Four install Tomcat
+  hosts: tomcat 
+  environment:
+    JAVA_HOME: /opt/pkgs/jdk-12.0.2/
+  tasks:
+
+  - name: crate tomcat directory
+    become: yes
+    file:
+      path: "/opt/tomcat10"
+      state: directory
+      mode: 0755
+  
+  - name : Download and install tomcat
+    become: yes
+    tags: installtc
+    unarchive:
+      src: "http://apachemirror.wuchna.com/tomcat/tomcat-10/v10.0.0-M1/bin/apache-tomcat-10.0.0-M1.tar.gz"
+      dest: "/opt/tomcat10/"
+      mode: 0755
+      remote_src: yes
+    register: "tcinstall"
+  
+  - name: Start the tomcat instance
+    become: yes
+    shell:
+      "./startup.sh"
+    args:
+      chdir: "/opt/tomcat10/apache-tomcat-10.0.0-M1/bin"
+
