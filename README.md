@@ -1,5 +1,5 @@
 # documentation on how to run and where to start.
-To start Tomcat10 with jdk12 the only requirment is docker. all the other software runs solated inside inside container.
+To start Tomcat10 with jdk12 the only requirment is docker. all the other software runs isolated inside container.
 ## quick start:
 ```
 docker-compose -f local.yml build && docker-compose -f local.yml up -d && cd ./spr/playbooks/ && ansible-playbook -i inventory playbook.yml --extra-vars "ansible_become_pass=DockerHostPass" 
