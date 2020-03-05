@@ -1,0 +1,7 @@
+silo_custom_volume_mounting() {
+  local VOLUME_PATH="/media/"
+  if [[ -n "$VOLUME_PATH" && -d "$VOLUME_PATH" ]]; then
+    echo "--volume '$(cd "$VOLUME_PATH" && pwd -P):/tmp/media'"
+  fi
+}
+
