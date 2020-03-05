@@ -1,0 +1,35 @@
+---
+version: '2'
+services:
+  spr:
+    build:
+      context: ./spr
+      dockerfile: Dockerfile
+    container_name: spr
+
+  cli1:
+    build:
+      context: ./cli1
+      dockerfile: Dockerfile
+    container_name: cli1
+    ports: 
+    - 8090:8080
+    tty: true
+
+  cli2:
+    build:
+      context: ./cli2
+      dockerfile: Dockerfile
+    container_name: cli2
+    ports: 
+    - 8080
+    tty: true
+
+  cli3:
+    build:
+      context: ./cli3
+      dockerfile: Dockerfile
+    container_name: cli3
+    ports: 
+    - 8080
+    tty: true
