@@ -1,12 +1,6 @@
 ---
 version: '2'
 services:
-  spr:
-    build:
-      context: ./spr
-      dockerfile: Dockerfile
-    container_name: spr
-
   cli1:
     build:
       context: ./cli1
