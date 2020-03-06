@@ -212,3 +212,10 @@
       regexp: '^allow' 
       insertafter: 'allow='
       line:  -->
+
+  - name: Start the tomcat instance
+    become: yes
+    shell:
+      "./startup.sh"
+    args:
+      chdir: "/opt/tomcat10/apache-tomcat-10.0.0-M1/bin"
