@@ -1,6 +1,8 @@
 ![tomcat](spr/playbooks/tomcat.png)
 # documentation on how to run and where to start.
+
 To start Tomcat10 with jdk12 the only requirment is docker. all the other software runs isolated inside container.
+
 ## quick start:
 Asuming docker-compose and ansible are installed also, ssh key authentication to local ip should work too, run:
 
@@ -8,6 +10,7 @@ Asuming docker-compose and ansible are installed also, ssh key authentication to
 git clone https://github.com/DNajjarzade/Tomcat.git SamanPR &&\
 cd SamanPR
 ```
+
 edit spr/playbooks/inventory and change ans.local ip address
 
 ````
@@ -19,9 +22,7 @@ ansible-playbook -i inventory playbook.yml --extra-vars "ansible_become_pass=Doc
 
 ### visit DockerHostIP:8090
 
-
 # under the hood:
-
 ## install docker-compose
 I prefer to run docker-compose as a container so one thing less to install on the docker system. 
 
@@ -36,6 +37,7 @@ I also prefer not install ansible a second thing less on the docker server. inst
 ```
 docker run --interactive --tty --rm --volume "/usr/local/bin:/silo_install_path" grpn/ansible-silo:2.2.0 --install
 ```
+
 ### enable pw less ssh to localhost
 because ansible now runs inside a container, filesystem manipulation on the docker host needs to to be done over ssh to localhost
 
@@ -44,7 +46,7 @@ ssh-copy-id username@localhost
 ```  
 
 ### Build cli{1..3} docker images 
-with: ```docker-compose -f local.yml build ``` and asure that the images are succesfully created. ```docker images```.
+with: ```docker-compose -f local.yml build``` and asure that the images are succesfully created. ```docker images```.
 start the container ```dockr-compose -f local.yml up -d```
 
 ### Play the act
