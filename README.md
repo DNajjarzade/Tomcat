@@ -1,4 +1,4 @@
-![tomcat](tomcat.png)
+![tomcat](spr/playbooks/tomcat.png)
 # documentation on how to run and where to start.
 To start Tomcat10 with jdk12 the only requirment is docker. all the other software runs isolated inside container.
 ## quick start:
