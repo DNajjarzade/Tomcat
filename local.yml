@@ -16,7 +16,7 @@ services:
       dockerfile: Dockerfile
     container_name: cli2
     ports: 
-    - 8080
+    - 8091:8080
     tty: true
 
   cli3:
@@ -25,5 +25,5 @@ services:
       dockerfile: Dockerfile
     container_name: cli3
     ports: 
-    - 8080
+    - 8092:8080
     tty: true
