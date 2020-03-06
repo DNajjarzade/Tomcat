@@ -16,6 +16,7 @@ docker-compose up -d &&\
 cd ./spr/playbooks/ &&\
 ansible-playbook -i inventory playbook.yml --extra-vars "ansible_become_pass=DockerHostPass" 
 ```
+
 ### visit DockerHostIP:8090
 
 
@@ -53,16 +54,5 @@ Standard ansible command to start the play is inside ```cd spr/playbooks/``` fol
 ansible-playbook -i inventory playbook.yml --ask-become-pass
 ```
 
-you can bundle the playbooks into docker images ```ansible-silo --bundle spr ``` and run:
-
-```
-docker run --interactive --tty --rm --volume "$HOME/bin:/silo_install_path" spr:latest --install
-```
-
-Now you can simply call spr to run your playbooks.
-
-```
-spr -i inventory playbook.yml --extra-vars "ansible_become_pass=YourPasswordForDockerHost"
-```
 visit <Host IP>:8090
 
