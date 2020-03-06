@@ -13,7 +13,7 @@ cd SamanPR
 
 edit spr/playbooks/inventory and change ans.local ip address
 
-````
+```
 docker-compose -f local.yml build &&\
 docker-compose up -d &&\
 cd ./spr/playbooks/ &&\
