@@ -46,6 +46,8 @@
   hosts: tomcat 
   become: yes
   become_user: root
+  tags:
+  - act1
   vars:
   - cli_users:
     - username: 'cliuser'
@@ -85,6 +87,8 @@
   hosts: ans.local
   become: yes
   become_user: root
+  tags:
+  - act2
   vars:
   - tomcat_hosts:
     - container_name: 'cli1'
@@ -109,27 +113,6 @@
       mode: "u=rwx,go=rx"
     register: pkgs_dir
 
-    #  - debug:
-    #      var: pkgs_dir
-    #      verbosity: 2
-    #
-    #  - name: Download jdk12 
-    #    get_url:
-    #      url: https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz
-    #      dest: /tmp/jdk-12.tar.gz
-    #
-    #  - name: extract jdk12 on ansible master server
-    #    become: yes
-    #    become_user: root
-    #    # no idea why but unarchive can not process jdk archive. using shell
-    #    #unarchive:
-    #    #  src: /tmp/jdk-12.tar.gz
-    #    #  dest: /media/pkgs/
-    #    #  mode: 0755
-    #    #remote_src: yes
-    #    shell: "tar -xzvf /tmp/jdk-12.tar.gz -C /media/pkgs/"
-    #    register: unzip
-
   - name : Download and extract jdk
     become: yes
     tags: installJava
@@ -148,6 +131,8 @@
 # Act Three
 - name: Act Three install Java 
   hosts: tomcat 
+  tags:
+  - act3
   vars:
   - tc_hosts:
     - container_name: 'cli1'
@@ -167,7 +152,7 @@
   - name: Set JAVA_HOME 
     lineinfile:
       path: /etc/profile
-      regexp: 'JAVA_HOME'
+      regexp: '^export JAVA_HOME'
       line: export JAVA_HOME=/opt/pkgs/jdk-12.0.2/
 
   - name: source /etc/profile
@@ -177,18 +162,24 @@
 # Act Four
 - name: Act Four install Tomcat
   hosts: tomcat 
+  tags:
+  - act4
+  vars:
+  - tomcat_users:
+    - username: 'cliuser'
+      password: 'c1i3nT&'
   environment:
     JAVA_HOME: /opt/pkgs/jdk-12.0.2/
   tasks:
 
-  - name: crate tomcat directory
+  - name: Create Tomcat directory
     become: yes
     file:
       path: "/opt/tomcat10"
       state: directory
       mode: 0755
   
-  - name : Download and install tomcat
+  - name : Download and install Tomcat
     become: yes
     tags: installtc
     unarchive:
@@ -197,11 +188,27 @@
       mode: 0755
       remote_src: yes
     register: "tcinstall"
-  
-  - name: Start the tomcat instance
-    become: yes
-    shell:
-      "./startup.sh"
-    args:
-      chdir: "/opt/tomcat10/apache-tomcat-10.0.0-M1/bin"
+ 
+  # set Tomcat User credentials
+  - name: Set Tomcat user credentials 
+    lineinfile:
+      path: /opt/tomcat10/apache-tomcat-10.0.0-M1/conf/tomcat-users.xml  
+      regexp: '^<tomcat-users>'
+      insertbefore: '^</tomcat-users>'
+      line:  <user username="{{ item.username }}" password="{{ item.password }}" roles="manager-gui,manager-status" />
+    with_items: '{{tomcat_users}}'
 
+  #  Enable Tomcat manager-gui
+  - name: Enable Tomcat manager-gui 
+    lineinfile:
+      path: /opt/tomcat10/apache-tomcat-10.0.0-M1/webapps/manager/META-INF/context.xml
+      regexp: '^allow' 
+      insertbefore: 'allow='
+      line:  <!--
+    
+  - name: Enable Tomcat manager-gui end 
+    lineinfile:
+      path: /opt/tomcat10/apache-tomcat-10.0.0-M1/webapps/manager/META-INF/context.xml
+      regexp: '^allow' 
+      insertafter: 'allow='
+      line:  -->
