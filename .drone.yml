@@ -1,0 +1,32 @@
+    ---
+    name: TomcatOnNimble
+
+    kind: pipeline
+    type: docker
+
+    clone:
+      disable: true
+
+    steps:
+      - name: pull
+        image: appleboy/drone-ssh
+        settings:
+          host: nimble.najjarza.de
+          secrets: [ssh_username, ssh_password]
+          username:
+            from_secret: ssh_username
+          password:
+            from_secret: ssh_password
+          port: 22
+          #command_timeout: 300
+          script:
+            - echo 'Deploy Start'
+            - pwd && whoami
+            - cd /home/dariush/SamanPR/
+            - git pull origin master
+            - docker-compose up -d
+            - echo "Deploy Finished"
+          when:
+            branch: master
+            event: [push] # step only triggers on push events
+            status: success
