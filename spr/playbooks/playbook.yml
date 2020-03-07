@@ -38,12 +38,12 @@
 
 # an ansible play to run tomcat with jdk-1.2 in four acts.
 # by dariush@najjarza.de
-# version 
+# version
 # 0.1.0
 #
-# Act One 
+# Act One
 - name: Act One create user
-  hosts: tomcat 
+  hosts: tomcat
   become: yes
   become_user: root
   tags:
@@ -58,14 +58,14 @@
     group:
       name=wheel
       state=present
-    
+
   - name: Allow wheel group to have passwordless sudo
     lineinfile:
       dest: /etc/sudoers
       state: present
       regexp: '^%wheel'
       line: '%wheel ALL=(ALL) NOPASSWD: ALL'
- 
+
   - name: Create User
     user:
       name: '{{item.username}}'
@@ -83,7 +83,7 @@
     with_items: '{{cli_users}}'
 
 # Act Two
-- name: Act Two Download files 
+- name: Act Two Download files
   hosts: ans.local
   become: yes
   become_user: root
@@ -129,8 +129,8 @@
     with_items: "{{tomcat_hosts}}"
 
 # Act Three
-- name: Act Three install Java 
-  hosts: tomcat 
+- name: Act Three install Java
+  hosts: tomcat
   tags:
   - act3
   vars:
@@ -149,7 +149,7 @@
   tasks:
 
   # set JAVA_HOME environment variable
-  - name: Set JAVA_HOME 
+  - name: Set JAVA_HOME
     lineinfile:
       path: /etc/profile
       regexp: '^export JAVA_HOME'
@@ -163,7 +163,7 @@
 
 # Act Four
 - name: Act Four install Tomcat
-  hosts: tomcat 
+  hosts: tomcat
   tags:
   - act4
   vars:
@@ -182,7 +182,7 @@
      #path: "/opt/tomcat9"
       state: directory
       mode: 0755
-  
+
   - name : Download and install Tomcat
     become: yes
     tags: installtc
@@ -198,8 +198,8 @@
   # enable manager-status role
   - name: enable manager-status role
     lineinfile:
-      path: /opt/tomcat10/apache-tomcat-10.0.0-M1/conf/tomcat-users.xml  
-      #path: /opt/tomcat9/apache-tomcat-9.0.31/conf/tomcat-users.xml  
+      path: /opt/tomcat10/apache-tomcat-10.0.0-M1/conf/tomcat-users.xml
+      #path: /opt/tomcat9/apache-tomcat-9.0.31/conf/tomcat-users.xml
       regexp: '^<tomcat-users>'
       insertbefore: '^</tomcat-users>'
       line: <role rolename="manager-status"/>
@@ -207,8 +207,8 @@
   # enable manager-gui role
   - name: enable manager-gui role
     lineinfile:
-      path: /opt/tomcat10/apache-tomcat-10.0.0-M1/conf/tomcat-users.xml  
-     #path: /opt/tomcat9/apache-tomcat-9.0.31/conf/tomcat-users.xml  
+      path: /opt/tomcat10/apache-tomcat-10.0.0-M1/conf/tomcat-users.xml
+     #path: /opt/tomcat9/apache-tomcat-9.0.31/conf/tomcat-users.xml
       regexp: '^<tomcat-users>'
       insertbefore: '^</tomcat-users>'
       line: <role rolename="manager-gui"/>
@@ -216,53 +216,53 @@
   # enable admin-gui role
   - name: enable admin-gui role
     lineinfile:
-      path: /opt/tomcat10/apache-tomcat-10.0.0-M1/conf/tomcat-users.xml  
-     #path: /opt/tomcat9/apache-tomcat-9.0.31/conf/tomcat-users.xml  
+      path: /opt/tomcat10/apache-tomcat-10.0.0-M1/conf/tomcat-users.xml
+     #path: /opt/tomcat9/apache-tomcat-9.0.31/conf/tomcat-users.xml
       regexp: '^<tomcat-users>'
       insertbefore: '^</tomcat-users>'
       line: <role rolename="admin-gui"/>
 
   # set Tomcat User credentials
-  - name: Set Tomcat user credentials 
+  - name: Set Tomcat user credentials
     lineinfile:
-      path: /opt/tomcat10/apache-tomcat-10.0.0-M1/conf/tomcat-users.xml  
-      #path: /opt/tomcat9/apache-tomcat-9.0.31/conf/tomcat-users.xml  
+      path: /opt/tomcat10/apache-tomcat-10.0.0-M1/conf/tomcat-users.xml
+      #path: /opt/tomcat9/apache-tomcat-9.0.31/conf/tomcat-users.xml
       regexp: '^<tomcat-users>'
       insertbefore: '^</tomcat-users>'
       line:  <user username="{{ item.username }}" password="{{ item.password }}" roles="{{ item.roles }}" />
     with_items: '{{tomcat_users}}'
 
   #  Enable Tomcat manager-gui
-  - name: Enable Tomcat manager-gui 
+  - name: Enable Tomcat manager-gui
     lineinfile:
       path: /opt/tomcat10/apache-tomcat-10.0.0-M1/webapps/manager/META-INF/context.xml
       #path: /opt/tomcat9/apache-tomcat-9.0.31/webapps/manager/META-INF/context.xml
-      regexp: '^<Valve' 
+      regexp: '^<Valve'
       insertbefore: '<Valve'
       line:  <!--
-    
-  - name: Enable Tomcat manager-gui end 
+
+  - name: Enable Tomcat manager-gui end
     lineinfile:
       path: /opt/tomcat10/apache-tomcat-10.0.0-M1/webapps/manager/META-INF/context.xml
       #path: /opt/tomcat9/apache-tomcat-9.0.31/webapps/manager/META-INF/context.xml
-      regexp: '^allow' 
+      regexp: '^allow'
       insertafter: 'allow='
       line:  -->
 
   #  Enable Tomcat host-manager-gui
-  - name: Enable Tomcat host-manager-gui 
+  - name: Enable Tomcat host-manager-gui
     lineinfile:
       path: /opt/tomcat10/apache-tomcat-10.0.0-M1/webapps/host-manager/META-INF/context.xml
       #path: /opt/tomcat9/apache-tomcat-9.0.31/webapps/host-manager/META-INF/context.xml
-      regexp: '^<Valve' 
+      regexp: '^<Valve'
       insertbefore: '<Valve'
       line:  <!--
-    
-  - name: Enable Tomcat host-manager-gui end 
+
+  - name: Enable Tomcat host-manager-gui end
     lineinfile:
       path: /opt/tomcat10/apache-tomcat-10.0.0-M1/webapps/host-manager/META-INF/context.xml
       #path: /opt/tomcat9/apache-tomcat-9.0.31/webapps/host-manager/META-INF/context.xml
-      regexp: '^allow' 
+      regexp: '^allow'
       insertafter: 'allow='
       line:  -->
 
