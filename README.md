@@ -1,6 +1,6 @@
 [![Build Status](https://drone.home.najjarza.de/api/badges/dariush/Tomcat/status.svg)](https://drone.home.najjarza.de/dariush/Tomcat)  
 
-![tomcat](spr/playbooks/tomcat.png)
+![tomcat](tomcat.png)
 # documentation on how to run and where to start.
 
 To start Tomcat10 with jdk12 the only requirment is docker. all the other software runs isolated inside container.
