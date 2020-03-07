@@ -6,11 +6,16 @@ To start Tomcat10 with jdk12 the only requirment is docker. all the other softwa
 #### Note: regarding Step2 
 
 Task 6. Then run Tomcat for start website from package ImportantProject.war and start it as a service on cli1.local
-no idea which war file you have in mind but the manager-gui is configured. feel free to deploy it from gui.
+no idea which ImportantProject.war file you have in mind, but the manager-gui is configured with the same credentials given in the task only the password laks the & signe.
+Have a look at git log to see why. feel free to deploy it from gui.
 
-Task 7. The site must be available on 8080 port from other systems on your network
-in step 3 the port mapping is set to 8090 so i decided to bind these ports:
+another difficulty i had was the task 7.
+Task 7. The site must be available on 8080 port from other systems on your network.
 
+But in step3 task 3 
+task 3. Make sure the port 8080 is mapped to the port 8090 on host
+
+so i decided to bind these ports:
 * cli1 8090
 * cli2 8091
 * cli3 8092
