@@ -29,7 +29,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 [all]
-localhost	ansible_connection=local
+# localhost	ansible_connection=local
 ans.local	ansible_connection=ssh  ansible_user=dariush ansible_host=nimble.najjarza.de  ansible_port=54322 
 
 [tomcat]
