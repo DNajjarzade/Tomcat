@@ -18,7 +18,7 @@ steps:
       password:
         from_secret: ssh_password
       environment:
-        ansible_become_pass:
+        become_pass:
           from_secret: ansible_become_pass
       port: 54322
       timeout: 1m
@@ -29,8 +29,8 @@ steps:
         - docker-compose up -d
         - cd spr/playbooks/
         - ansible all -m ping
-        - echo ansible_become_pass
-        - ansible-playbook -i inventory playbook.yml --extra-vars "ansible_become_pass=ansible_become_pass"
+        - echo $become_pass
+        - ansible-playbook -i inventory playbook.yml --extra-vars "ansible_become_pass=become_pass"
         - echo "Deploy Finished"
       when:
         branch: master
