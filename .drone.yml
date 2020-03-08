@@ -17,9 +17,9 @@ steps:
         from_secret: ssh_username
       password:
         from_secret: ssh_password
-    environment:
-      become_pass:
-        from_secret: ansible_become_pass
+      environment:
+        become_pass:
+          from_secret: ansible_become_pass
       port: 54322
       timeout: 1m
       script:
