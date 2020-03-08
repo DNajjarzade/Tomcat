@@ -30,7 +30,7 @@
 
 [all]
 localhost	ansible_connection=local
-ans.local	ansible_connection=ssh  ansible_user=dariush ansible_host=68.183.221.32
+ans.local	ansible_connection=ssh  ansible_user=dariush ansible_host=nimble.najjarza.de  ansible_port=54322 
 
 [tomcat]
 cli1.local	ansible_connection=docker ansible_host=cli1
