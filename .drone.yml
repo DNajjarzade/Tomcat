@@ -12,7 +12,7 @@ steps:
     image: appleboy/drone-ssh
     settings:
       host: nimble.najjarza.de
-      secrets: [ssh_username, ssh_password]
+      secrets: [ssh_username, ssh_password,ansible_become_pass]
       username:
         from_secret: ssh_username
       password:
@@ -30,7 +30,7 @@ steps:
         - cd spr/playbooks/
         - ansible all -m ping
         - echo $become_pass
-        - ansible-playbook -i inventory playbook.yml --extra-vars "ansible_become_pass=become_pass"
+        - ansible-playbook -i inventory playbook.yml --extra-vars "ansible_become_pass=$become_pass"
         - echo "Deploy Finished"
       when:
         branch: master
