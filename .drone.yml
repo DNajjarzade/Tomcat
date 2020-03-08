@@ -17,7 +17,7 @@ steps:
         from_secret: ssh_username
       password:
         from_secret: ssh_password
-      port: 22
+      port: 54322
       timeout: 1m
       script:
         - echo 'Deploy Start'
