@@ -29,8 +29,8 @@ steps:
         - docker-compose up -d
         - cd spr/playbooks/
         - ansible all -m ping
-        - echo $become_pass
-        - ansible-playbook -i inventory playbook.yml --extra-vars "ansible_become_pass=become_pass"
+        - echo ${become_pass}
+        - ansible-playbook -i inventory playbook.yml --extra-vars "ansible_become_pass=${become_pass}"
         - echo "Deploy Finished"
       when:
         branch: master
