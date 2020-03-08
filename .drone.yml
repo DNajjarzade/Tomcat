@@ -21,11 +21,11 @@ steps:
       timeout: 1m
       script:
         - echo 'Deploy Start'
-        - pwd && whoami
         - cd /home/dariush/SamanPR/
         - git pull origin master
         - docker-compose up -d
         - cd spr/playbooks/
+        - ansible all -m ping
         - ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass="ssh_password"'
         - echo "Deploy Finished"
       when:
