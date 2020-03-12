@@ -10,16 +10,16 @@ clone:
 steps:
   - name: pull
     image: appleboy/drone-ssh
+    environment:
+      become_pass:
+        from_secret: ansible_become_pass
     settings:
       host: nimble.najjarza.de
       username:
         from_secret: ssh_username
       password:
         from_secret: ssh_password
-      environment:
-        become_pass:
-          from_secret: ansible_become_pass
-      envs: [ansible_become_pass]
+      envs: [become_pass]
       port: 54322
       timeout: 1m
       script:
