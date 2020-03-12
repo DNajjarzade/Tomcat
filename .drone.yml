@@ -8,7 +8,7 @@ clone:
   disable: true
 
 steps:
-  - name: pull
+  - name: git pull origin master
     image: appleboy/drone-ssh
     settings:
       host: nimble.najjarza.de
@@ -23,16 +23,41 @@ steps:
       port: 54322
       timeout: 1m
       script:
-        - echo 'Deploy Start'
+        - echo 'Repository pull Start'
         - cd /home/dariush/SamanPR/
         - git pull origin master
         - docker-compose up -d
-        - cd spr/playbooks/
-        - ansible all -m ping
-        - echo $become_pass
-        - ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass="$become_pass"'
-        - echo "Deploy Finished"
+        - echo "Repository pull Finished"
       when:
         branch: master
         event: [push] # step only triggers on push events
         status: success
+
+- name: check ansible syntax
+  image: plugins/ansible:1
+  environment:
+    become_pass:
+      from_secret: ansible_become_pass
+  settings:
+    playbook: spr/playbooks/playbook.yml
+    #galaxy: ansible/requirements.yml
+    inventory: spr/playbooks/inventory
+    syntax_check: true
+  when:
+    event:
+    - pull_request
+
+- name: apply ansible playbook
+  image: plugins/ansible:1
+  environment:
+  environment:
+    become_pass:
+      from_secret: ansible_become_pass
+  settings:
+    playbook: spr/playbooks/playbook.yml
+    inventory: spr/playbooks/inventory
+    syntax_check: true
+  when:
+    event:
+    - push
+    - tag
