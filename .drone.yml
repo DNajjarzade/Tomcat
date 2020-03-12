@@ -10,16 +10,18 @@ clone:
 steps:
   - name: pull
     image: appleboy/drone-ssh
+    environment:
+      become_pass:
+        from_secret: ansible_become_pass
+      become:
+        from_secret: BECOME_PASS
     settings:
       host: nimble.najjarza.de
       username:
         from_secret: ssh_username
       password:
         from_secret: ssh_password
-      environment:
-        become_pass:
-          from_secret: ansible_become_pass
-      envs: [ansible_become_pass]
+      envs: [become_pass, become]
       port: 54322
       timeout: 1m
       script:
@@ -33,8 +35,12 @@ steps:
         - echo $become_pass >> /tmp/file
         - echo ${become_pass} >> /tmp/file
         - echo $${become_pass} >> /tmp/file
+        - echo become >> /tmp/file
+        - echo $become >> /tmp/file
+        - echo ${become} >> /tmp/file
+        - echo $${become} >> /tmp/file
         - cat /tmp/file
-        - ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass=$${become_pass}'
+        - ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass=${become_pass}'
         - echo "Deploy Finished"
       when:
         branch: master
