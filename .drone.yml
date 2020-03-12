@@ -8,55 +8,31 @@ clone:
   disable: true
 
 steps:
-  - name: pull latest changes 
+  - name: pull
     image: appleboy/drone-ssh
     settings:
       host: nimble.najjarza.de
+      secrets: [ssh_username, ssh_password,ansible_become_pass]
       username:
         from_secret: ssh_username
       password:
         from_secret: ssh_password
+      environment:
+        become_pass:
+          from_secret: ansible_become_pass
       port: 54322
       timeout: 1m
-    script:
-      - echo 'Repository pull Start'
-      - cd /home/dariush/SamanPR/
-      - git pull origin master
-      - docker-compose up -d
-      - echo "Repository pull Finished"
-    when:
-      branch: master
-      event: [push] # step only triggers on push events
-      #status: success
-
-  - name: check ansible syntax
-    image: plugins/ansible:1
-    environment:
-      ansible_become_pass:
-        from_secret: ansible_become_pass
-    settings:
-      playbook: /home/dariush/SamanPR/spr/playbooks/playbook.yml
-      #galaxy: ansible/requirements.yml
-      inventory: /home/dariush/SamanPR/spr/playbooks/inventory
-    when:
-      branch: master
-      event:
-      - pull_request
-
-  - name: apply ansible playbook
-    image: plugins/ansible:1
-    environment:
-    environment:
-      become_pass:
-        from_secret: ansible_become_pass
-    settings:
-      playbook: /home/dariush/SamanPR/spr/playbooks/playbook.yml
-      inventory: /home/dariush/SamanPR/spr/playbooks/inventory
-      syntax_check: true
-    script:
-      - echo 'ansible play Start'
-    when:
-      branch: master
-      event:
-      - push
-      - tag
+      script:
+        - echo 'Deploy Start'
+        - cd /home/dariush/SamanPR/
+        - git pull origin master
+        - docker-compose up -d
+        - cd spr/playbooks/
+        - ansible all -m ping
+        - echo $become_pass
+        - ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass="$become_pass"'
+        - echo "Deploy Finished"
+      when:
+        branch: master
+        event: [push] # step only triggers on push events
+        status: success
