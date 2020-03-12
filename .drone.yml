@@ -12,7 +12,6 @@ steps:
     image: appleboy/drone-ssh
     settings:
       host: nimble.najjarza.de
-      secrets: [ssh_username, ssh_password,ansible_become_pass]
       username:
         from_secret: ssh_username
       password:
@@ -20,6 +19,7 @@ steps:
       environment:
         become_pass:
           from_secret: ansible_become_pass
+      envs: [ansible_become_pass]
       port: 54322
       timeout: 1m
       script:
@@ -29,8 +29,11 @@ steps:
         - docker-compose up -d
         - cd spr/playbooks/
         - ansible all -m ping
-        - echo $${become_pass}
-        - echo become_pass
+        - echo become_pass > /tmp/file
+        - echo $become_pass >> /tmp/file
+        - echo ${become_pass} >> /tmp/file
+        - echo $${become_pass} >> /tmp/file
+        - cat /tmp/file
         - ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass=$${become_pass}'
         - echo "Deploy Finished"
       when:
