@@ -22,16 +22,16 @@ steps:
           from_secret: ansible_become_pass
       port: 54322
       timeout: 1m
-      script:
-        - echo 'Repository pull Start'
-        - cd /home/dariush/SamanPR/
-        - git pull origin master
-        - docker-compose up -d
-        - echo "Repository pull Finished"
-      when:
-        branch: master
-        event: [push] # step only triggers on push events
-        #status: success
+    script:
+      - echo 'Repository pull Start'
+      - cd /home/dariush/SamanPR/
+      - git pull origin master
+      - docker-compose up -d
+      - echo "Repository pull Finished"
+    when:
+      branch: master
+      event: [push] # step only triggers on push events
+      #status: success
 
   - name: check ansible syntax
     image: plugins/ansible:1
@@ -44,6 +44,7 @@ steps:
       inventory: spr/playbooks/inventory
       syntax_check: true
     when:
+      branch: master
       event:
       - pull_request
 
@@ -57,6 +58,8 @@ steps:
       playbook: spr/playbooks/playbook.yml
       inventory: spr/playbooks/inventory
       syntax_check: true
+    script:
+      - echo 'ansible play Start'
     when:
       event:
       - push
