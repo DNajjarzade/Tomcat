@@ -13,15 +13,15 @@ steps:
     environment:
       become_pass:
         from_secret: ansible_become_pass
-      become:
-        from_secret: BECOME_PASS
+      testsecret:
+        from_secret: test
     settings:
       host: nimble.najjarza.de
       username:
         from_secret: ssh_username
       password:
         from_secret: ssh_password
-      envs: [become_pass, become]
+      envs: [become_pass, testsecret]
       port: 54322
       timeout: 1m
       script:
@@ -35,10 +35,10 @@ steps:
         - echo $become_pass >> /tmp/file
         - echo ${become_pass} >> /tmp/file
         - echo $${become_pass} >> /tmp/file
-        - echo become >> /tmp/file
-        - echo $become >> /tmp/file
-        - echo ${become} >> /tmp/file
-        - echo $${become} >> /tmp/file
+        - echo testsecret >> /tmp/file
+        - echo $testsecret >> /tmp/file
+        - echo ${testsecret} >> /tmp/file
+        - echo $${testsecret} >> /tmp/file
         - cat /tmp/file
         - ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass=${become_pass}'
         - echo "Deploy Finished"
