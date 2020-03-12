@@ -8,18 +8,14 @@ clone:
   disable: true
 
 steps:
-  - name: git pull origin master
+  - name: pull latest changes 
     image: appleboy/drone-ssh
     settings:
       host: nimble.najjarza.de
-      secrets: [ssh_username, ssh_password,ansible_become_pass]
       username:
         from_secret: ssh_username
       password:
         from_secret: ssh_password
-      environment:
-        become_pass:
-          from_secret: ansible_become_pass
       port: 54322
       timeout: 1m
     script:
@@ -36,13 +32,12 @@ steps:
   - name: check ansible syntax
     image: plugins/ansible:1
     environment:
-      become_pass:
+      ansible_become_pass:
         from_secret: ansible_become_pass
     settings:
-      playbook: spr/playbooks/playbook.yml
+      playbook: /home/dariush/SamanPR/spr/playbooks/playbook.yml
       #galaxy: ansible/requirements.yml
-      inventory: spr/playbooks/inventory
-      syntax_check: true
+      inventory: /home/dariush/SamanPR/spr/playbooks/inventory
     when:
       branch: master
       event:
@@ -55,12 +50,13 @@ steps:
       become_pass:
         from_secret: ansible_become_pass
     settings:
-      playbook: spr/playbooks/playbook.yml
-      inventory: spr/playbooks/inventory
+      playbook: /home/dariush/SamanPR/spr/playbooks/playbook.yml
+      inventory: /home/dariush/SamanPR/spr/playbooks/inventory
       syntax_check: true
     script:
       - echo 'ansible play Start'
     when:
+      branch: master
       event:
       - push
       - tag
