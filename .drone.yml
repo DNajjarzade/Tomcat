@@ -35,8 +35,6 @@ steps:
     environment:
       become_pass:
         from_secret: ansible_become_pass
-      TEST:
-        from_secret: test
     settings:
       host: nimble.najjarza.de
       username:
@@ -49,7 +47,7 @@ steps:
       script:
         - echo 'Ansible play start'
         - cd /home/dariush/SamanPR/spr/playbooks/
-        - ansible-playbook -i inventory playbook.yml --extra-vars "ansible_become_pass=$${TEST}"
+        - ansible-playbook -i inventory playbook.yml --extra-vars "ansible_become_pass=$${become_pass}"
         - echo 'Ansible play finished'
         - echo "Deploy Finished"
       when:
