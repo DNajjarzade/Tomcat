@@ -119,3 +119,4 @@ steps:
       ({{ commit.branch }} - {{ truncate commit.sha 8 }})
     recipients:
       - dariush@najjarza.de
+      - dnajjarzade+DroneTomcatCI@gmail.com
