@@ -3,8 +3,8 @@
 ![tomcat](tomcat.png)
 # documentation on how to run and where to start.
 
-To start Tomcat10 with jdk12 the only requirment is docker. all the other parts ( docker-compose, ansible ) can run isolated inside container.  
-Because this is just a demo project i made the drone ci build history publicly viewable. You can access it by clicking on this link : [![Build Status](https://drone.home.najjarza.de/api/badges/dariush/Tomcat/status.svg)](https://drone.home.najjarza.de/dariush/Tomcat)   (Keep in mind to be patient the drone ci runs on my server at home and I do not have the fastest internet binding nor a very powerfull server, But it does the job.)
+To start Tomcat10 with jdk12 the only requirment is docker. all the other parts ( docker-compose, ansible, hadolint ) can run isolated inside container.  
+Because this is just a demo project i made the drone ci build history publicly viewable. You can access it by clicking on this link : [![Build Status](https://drone.home.najjarza.de/api/badges/dariush/Tomcat/status.svg)](https://drone.home.najjarza.de/dariush/Tomcat)   (Keep in mind to be patient the drone ci runs on my server at home and I do not have the fastest internet binding nor a very powerfull server, but it does the job.)
 
 ## quick start:
 Asuming docker-compose and ansible are installed also, ssh key authentication to local ip should work too, run:
