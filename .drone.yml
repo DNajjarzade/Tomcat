@@ -13,7 +13,7 @@ steps:
     environment:
       become_pass:
         from_secret: ansible_become_pass
-      testsecret:
+      TEST:
         from_secret: test
     settings:
       host: nimble.najjarza.de
@@ -31,15 +31,18 @@ steps:
         - docker-compose up -d
         - cd spr/playbooks/
         - ansible all -m ping
-        - echo become_pass > /tmp/file
-        - echo $become_pass >> /tmp/file
-        - echo ${become_pass} >> /tmp/file
-        - echo $${become_pass} >> /tmp/file
-        - echo ---------------- >> /tmp/file
-        - echo testsecret >> /tmp/file
-        - echo $testsecret >> /tmp/file
-        - echo ${testsecret} >> /tmp/file
-        - echo $${testsecret} >> /tmp/file
+        - echo test >> /tmp/file
+        - echo TEST >> /tmp/file
+        - echo $test >> /tmp/file
+        - echo $${test} >> /tmp/file
+        - echo "$test" >> /tmp/file
+        - echo "$${test}" >> /tmp/file
+        - echo $TEST >> /tmp/file
+        - echo $${TEST} >> /tmp/file
+        - echo "$TEST" >> /tmp/file
+        - echo "$${TEST}"
+        - pwd
+        - whoami
         - cat /tmp/file
         - ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass=${become_pass}'
         - echo "Deploy Finished"
