@@ -33,8 +33,8 @@ steps:
   - name: Deploy
     image: appleboy/drone-ssh
     environment:
-      become_pass:
-        from_secret: ansible_become_pass
+      BECOME:
+        from_secret: become
     settings:
       host: nimble.najjarza.de
       username:
@@ -43,11 +43,11 @@ steps:
         from_secret: ssh_password
       port: 54322
       timeout: 1m
-      envs: [become_pass, TEST]
+      envs: [BECOME]
       script:
         - echo 'Ansible play start'
         - cd /home/dariush/SamanPR/spr/playbooks/
-        - ansible-playbook -i inventory playbook.yml --extra-vars "ansible_become_pass=$${become_pass}"
+        - ansible-playbook -i inventory playbook.yml --extra-vars "ansible_become_pass=$${BECOME}"
         - echo 'Ansible play finished'
         - echo "Deploy Finished"
       when:
