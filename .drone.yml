@@ -23,8 +23,56 @@ steps:
         - echo 'Git pull origin master'
         - cd /home/dariush/SamanPR/
         - git pull origin master
-        - docker-compose up -d
         - echo 'git pull finished' 
+      when:
+        branch: master
+        event: [push] # step only triggers on push events
+        status: success
+
+  - name: test
+    image: appleboy/drone-ssh
+    settings:
+      host: nimble.najjarza.de
+      username:
+        from_secret: ssh_username
+      password:
+        from_secret: ssh_password
+      port: 54322
+      timeout: 1m
+      script:
+        - echo 'Tests Start'
+        - echo 'Test Dockerfiles Start'
+        - cd /home/dariush/SamanPR/
+        - docker run --rm -i hadolint/hadolint < clie1/Dockerfile
+        - docker run --rm -i hadolint/hadolint < clie2/Dockerfile
+        - docker run --rm -i hadolint/hadolint < clie3/Dockerfile
+        - echo 'Test Dockerfiles Finish'
+        - echo 'Test ansible-playbooks Start'
+        - cd /home/dariush/SamanPR/spr/playbooks/
+        - ansible-lint playbook.yml 
+        - echo 'Test ansible-playbooks Finish'
+        - echo 'Tests finished' 
+      when:
+        branch: master
+        event: [push] # step only triggers on push events
+        status: success
+
+  - name: build
+    image: appleboy/drone-ssh
+    settings:
+      host: nimble.najjarza.de
+      username:
+        from_secret: ssh_username
+      password:
+        from_secret: ssh_password
+      port: 54322
+      timeout: 1m
+      script:
+        - echo 'build Start'
+        - cd /home/dariush/SamanPR/
+        - docker-compose build
+        - docker-compose up -d
+        - echo 'build finished' 
       when:
         branch: master
         event: [push] # step only triggers on push events
