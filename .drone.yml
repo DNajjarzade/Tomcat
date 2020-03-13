@@ -59,8 +59,8 @@ steps:
         - echo $TEST >> /tmp/file
         - echo $${TEST} >> /tmp/file
         - echo "$TEST" >> /tmp/file
-        - echo "$${TEST}"
-        - echo ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass="$${TEST}"'
+        - echo "$${TEST}" >> /tmp/file
+        - echo ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass="$${TEST}"' >> /tmp/file
         - pwd
         - whoami
         - cat /tmp/file
