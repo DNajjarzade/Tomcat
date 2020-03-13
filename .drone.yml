@@ -109,14 +109,18 @@ steps:
 
   - name: notify
     image: drillster/drone-email
-    from: d@najjarza.de
-    host: mail.najjarza.de
-    port: 25
-    #skip_verify: true
-    secrets: [ email_username, email_password ]
-    subject: >
-      [DRONE CI]: {{ build.status }}: {{ repo.owner }}/{{ repo.name }}
-      ({{ commit.branch }} - {{ truncate commit.sha 8 }})
-    recipients:
-      - dariush@najjarza.de
-      - dnajjarzade+DroneTomcatCI@gmail.com
+    settings:
+      from: d@najjarza.de
+      host: mail.najjarza.de
+      port: 25
+      #skip_verify: true
+      secrets: [ email_username, email_password ]
+      subject: >
+        [{{ build.status }}]
+        {{ repo.owner }}/{{ repo.name }}
+        ({{ build.branch }} - {{ truncate build.commit 8 }})
+      body: >
+        https://drone.home.najjarza.de/dariush/Tomcat
+      recipients:
+        - dariush@najjarza.de
+        - dnajjarzade+DroneTomcatCI@gmail.com
