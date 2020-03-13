@@ -35,12 +35,13 @@ steps:
         - echo $become_pass >> /tmp/file
         - echo ${become_pass} >> /tmp/file
         - echo $${become_pass} >> /tmp/file
+        - echo ---------------- >> /tmp/file
         - echo testsecret >> /tmp/file
         - echo $testsecret >> /tmp/file
         - echo ${testsecret} >> /tmp/file
         - echo $${testsecret} >> /tmp/file
         - cat /tmp/file
-        - ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass=${become}'
+        - ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass=${become_pass}'
         - echo "Deploy Finished"
       when:
         branch: master
