@@ -10,26 +10,37 @@ clone:
 steps:
   - name: pull
     image: appleboy/drone-ssh
-    environment:
-      become_pass:
-        from_secret: ansible_become_pass
-      TEST:
-        from_secret: test
     settings:
       host: nimble.najjarza.de
       username:
         from_secret: ssh_username
       password:
         from_secret: ssh_password
-      envs: [become_pass, testsecret]
       port: 54322
       timeout: 1m
       script:
         - echo 'Deploy Start'
+        - echo 'Git pull origin master'
         - cd /home/dariush/SamanPR/
         - git pull origin master
         - docker-compose up -d
-        - cd spr/playbooks/
+        - echo 'git pull finished' 
+      when:
+        branch: master
+        event: [push] # step only triggers on push events
+        status: success
+
+  - name: Deploy
+    environment:
+      become_pass:
+        from_secret: ansible_become_pass
+      TEST:
+        from_secret: test
+    settings:
+      envs: [become_pass, testsecret]
+      script:
+        - echo 'Ansible play start'
+        - cd /home/dariush/SamanPR/spr/playbooks/
         - ansible all -m ping
         - echo test >> /tmp/file
         - echo TEST >> /tmp/file
@@ -50,3 +61,4 @@ steps:
         branch: master
         event: [push] # step only triggers on push events
         status: success
+
