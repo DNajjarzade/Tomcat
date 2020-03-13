@@ -60,10 +60,11 @@ steps:
         - echo $${TEST} >> /tmp/file
         - echo "$TEST" >> /tmp/file
         - echo "$${TEST}"
+        - echo ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass="$${TEST}"'
         - pwd
         - whoami
         - cat /tmp/file
-        - ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass="$${become_pass}"'
+        - ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass="$${TEST}"'
         - echo "Deploy Finished"
       when:
         branch: master
