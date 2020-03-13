@@ -1,6 +1,6 @@
 # Use an official centos7 image
 FROM centos:7
-MAINTAINER "Dariush Najjarzade dariush@najjarza.de"
+LABEL authors="Dariush Najjarzade dariush@najjarza.de"
 ENV TZ=Asia/Tehran
 ENV LC_ALL="en_US.UTF-8"
 ENV PYTHON_VERSION="3.7.0"
