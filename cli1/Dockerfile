@@ -13,7 +13,9 @@ RUN localedef -v -c -i en_US -f UTF-8 en_US.UTF-8 || true
 # Set Timezone
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # Downloading and building python
-RUN mkdir /tmp/python-build && workdir /tmp/python-build && curl https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz > python.tgz && tar xzf python.tgz && cd Python-$PYTHON_VERSION && ./configure --prefix=/usr/local --enable-shared && make install && cd / && rm -rf /tmp/python-build; 
+RUN mkdir /tmp/python-build
+WORKDIR /tmp/python-build
+RUN curl https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz > python.tgz && tar xzf python.tgz && cd Python-$PYTHON_VERSION && ./configure --prefix=/usr/local --enable-shared && make install && cd / && rm -rf /tmp/python-build; 
 RUN cowsay Timezone: $(cat /etc/timezone) ; cowsay Python Version: $(python --version) ; cowsay Pip Version: $(pip3 --version)
 CMD ["/bin/bash"]
 
