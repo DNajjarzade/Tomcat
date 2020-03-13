@@ -49,22 +49,8 @@ steps:
       script:
         - echo 'Ansible play start'
         - cd /home/dariush/SamanPR/spr/playbooks/
-        - ansible all -m ping
-        - echo test > /tmp/file
-        - echo TEST >> /tmp/file
-        - echo $test >> /tmp/file
-        - echo $${test} >> /tmp/file
-        - echo "$test" >> /tmp/file
-        - echo "$${test}" >> /tmp/file
-        - echo $TEST >> /tmp/file
-        - echo $${TEST} >> /tmp/file
-        - echo "$TEST" >> /tmp/file
-        - echo "$${TEST}"
-        - echo ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass="$${TEST}"'
-        - pwd
-        - whoami
-        - cat /tmp/file
-        - ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass="$${TEST}"'
+        - ansible-playbook -i inventory playbook.yml --extra-vars "ansible_become_pass=$${TEST}"
+        - echo 'Ansible play finished'
         - echo "Deploy Finished"
       when:
         branch: master
