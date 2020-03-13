@@ -43,9 +43,9 @@ steps:
         - echo 'Tests Start'
         - echo 'Test Dockerfiles Start'
         - cd /home/dariush/SamanPR/
-        - docker run --rm -i hadolint/hadolint < clie1/Dockerfile
-        - docker run --rm -i hadolint/hadolint < clie2/Dockerfile
-        - docker run --rm -i hadolint/hadolint < clie3/Dockerfile
+        - docker run --rm -i hadolint/hadolint < cli1/Dockerfile
+        - docker run --rm -i hadolint/hadolint < cli2/Dockerfile
+        - docker run --rm -i hadolint/hadolint < cli3/Dockerfile
         - echo 'Test Dockerfiles Finish'
         - echo 'Test ansible-playbooks Start'
         - cd /home/dariush/SamanPR/spr/playbooks/
@@ -78,7 +78,7 @@ steps:
         event: [push] # step only triggers on push events
         status: success
 
-  - name: Deploy
+  - name: deploy
     image: appleboy/drone-ssh
     environment:
       BECOME:
@@ -103,3 +103,14 @@ steps:
         event: [push] # step only triggers on push events
         status: success
 
+  - name: notify
+      image: drillster/drone-email
+      from: d@najjarza.de
+      host: mail.najjarza.de
+      skip_verify: true
+      secrets: [ email_username, email_password ]
+      subject: >
+        [DRONE CI]: {{ build.status }}: {{ repo.owner }}/{{ repo.name }}
+        ({{ commit.branch }} - {{ truncate commit.sha 8 }})
+      recipients:
+        - dariush@najjarza.de
