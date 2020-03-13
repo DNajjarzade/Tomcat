@@ -50,7 +50,7 @@ steps:
         - echo 'Ansible play start'
         - cd /home/dariush/SamanPR/spr/playbooks/
         - ansible all -m ping
-        - echo test >> /tmp/file
+        - echo test > /tmp/file
         - echo TEST >> /tmp/file
         - echo $test >> /tmp/file
         - echo $${test} >> /tmp/file
