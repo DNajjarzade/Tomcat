@@ -63,7 +63,7 @@ steps:
         - pwd
         - whoami
         - cat /tmp/file
-        - ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass=${become_pass}'
+        - ansible-playbook -i inventory playbook.yml --extra-vars 'ansible_become_pass="$${become_pass}"'
         - echo "Deploy Finished"
       when:
         branch: master
