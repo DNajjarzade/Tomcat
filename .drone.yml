@@ -41,7 +41,7 @@ steps:
       timeout: 1m
       script:
         - echo 'Tests Start'
-        - echo 'Test Dockerfiles Start ---------------------'
+        - echo 'Test Dockerfiles Start'
         - cd /home/dariush/SamanPR/
         - echo 'Test cli1 Dockerfile -----------------------'
         - docker run --rm -i hadolint/hadolint < cli1/Dockerfile
@@ -50,10 +50,10 @@ steps:
         - echo 'Test cli3 Dockerfile -----------------------'
         - docker run --rm -i hadolint/hadolint < cli3/Dockerfile
         - echo 'Test Dockerfiles Finish --------------------'
-        - echo 'Test ansible-playbooks Start ---------------'
+        - echo 'Test ansible-playbooks Start'
         - cd /home/dariush/SamanPR/spr/playbooks/
         - ansible-lint playbook.yml 
-        - echo 'Test ansible-playbooks Finish ---------------'
+        - echo 'Test ansible-playbooks Finish'
         - echo 'Tests finished' 
       when:
         branch: master
@@ -109,7 +109,7 @@ steps:
   - name: notify
     image: drillster/drone-email
     from: d@najjarza.de
-    host: mail.najjarza.de
+    host: mail.najjarza.de:25
     skip_verify: true
     secrets: [ email_username, email_password ]
     subject: >
