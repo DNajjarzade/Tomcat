@@ -110,8 +110,9 @@ steps:
   - name: notify
     image: drillster/drone-email
     from: d@najjarza.de
-    host: mail.najjarza.de:25
-    skip_verify: true
+    host: mail.najjarza.de
+    port: 25
+    #skip_verify: true
     secrets: [ email_username, email_password ]
     subject: >
       [DRONE CI]: {{ build.status }}: {{ repo.owner }}/{{ repo.name }}
