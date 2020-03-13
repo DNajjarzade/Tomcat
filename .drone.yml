@@ -52,7 +52,8 @@ steps:
         - echo 'Test Dockerfiles Finish --------------------'
         - echo 'Test ansible-playbooks Start'
         - cd /home/dariush/SamanPR/spr/playbooks/
-        - ansible-lint playbook.yml 
+        - ansible-lint playbook.yml
+        - ansible-playbook --syntax-check --list-tasks -i inventory playbook.yml 
         - echo 'Test ansible-playbooks Finish'
         - echo 'Tests finished' 
       when:
