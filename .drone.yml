@@ -45,12 +45,12 @@ steps:
         from_secret: ssh_password
       port: 54322
       timeout: 1m
-      envs: [become_pass, testsecret]
+      envs: [become_pass, TEST]
       script:
         - echo 'Ansible play start'
         - cd /home/dariush/SamanPR/spr/playbooks/
         - ansible all -m ping
-        - echo test >> /tmp/file
+        - echo test > /tmp/file
         - echo TEST >> /tmp/file
         - echo $test >> /tmp/file
         - echo $${test} >> /tmp/file
