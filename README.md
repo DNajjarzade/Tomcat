@@ -3,24 +3,8 @@
 ![tomcat](tomcat.png)
 # documentation on how to run and where to start.
 
-To start Tomcat10 with jdk12 the only requirment is docker. all the other software runs isolated inside container.
-
-#### Note: regarding Step2 
-
-Task 6. Then run Tomcat for start website from package ImportantProject.war and start it as a service on cli1.local  
-
-no idea which ImportantProject.war file you have in mind, but the manager-gui is configured with the same credentials given in the task only the password laks the & signe.  
-Have a look at git log to see why. feel free to deploy it from gui.
-
-another difficulty i had was the task 7.  
-Task 7. The site must be available on 8080 port from other systems on your network.  
-But in step3 task 3  
-task 3. Make sure the port 8080 is mapped to the port 8090 on host  
-
-so i decided to bind these ports:
-* cli1 8090
-* cli2 8091
-* cli3 8092
+To start Tomcat10 with jdk12 the only requirment is docker. all the other parts ( docker-compose, ansible ) can run isolated inside container.  
+Because this is just a demo project i made the drone ci build history publicly viewable. You can access it by clicking on this link : [![Build Status](https://drone.home.najjarza.de/api/badges/dariush/Tomcat/status.svg)](https://drone.home.najjarza.de/dariush/Tomcat)   (Keep in mind to be patient the drone ci runs on my server at home and I do not have the fastest internet binding nor a very powerfull server, But it does the job.)
 
 ## quick start:
 Asuming docker-compose and ansible are installed also, ssh key authentication to local ip should work too, run:
@@ -40,6 +24,22 @@ ansible-playbook -i inventory playbook.yml --extra-vars "ansible_become_pass=Doc
 ```
 
 ### visit DockerHostIP:8090
+
+#### Note: regarding Step2 
+
+* Task 6. Then run Tomcat for start website from package ImportantProject.war and start it as a service on cli1.local  
+
+no idea which ImportantProject.war file you have in mind, but the manager-gui is configured with the same credentials given in the task only the password laks the & signe. Have a look at git log to see why. feel free to deploy it from gui.
+
+another difficulty i had was the task 7.  
+* Task 7. The site must be available on 8080 port from other systems on your network.  
+But in step3 task 3  
+task 3. Make sure the port 8080 is mapped to the port 8090 on host  
+
+so i decided to bind these ports:
+* cli1 8090
+* cli2 8091
+* cli3 8092
 
 # under the hood:
 ## install docker-compose
